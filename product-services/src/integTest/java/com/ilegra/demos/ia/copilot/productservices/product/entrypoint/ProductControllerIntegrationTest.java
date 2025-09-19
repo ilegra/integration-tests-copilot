@@ -4,58 +4,20 @@ import com.ilegra.demos.ia.copilot.productservices.product.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.*;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.http.*;
 
 import java.util.UUID;
 
-@Testcontainers
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integTest")
-@ContextConfiguration(initializers = ProductControllerIntegrationTest.Initializer.class)
-public class ProductControllerIntegrationTest {
-    @Container
-    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.2")
-            .withDatabaseName("productdb")
-            .withUsername("postgres")
-            .withPassword("postgres");
-
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        @Override
-        public void initialize(ConfigurableApplicationContext context) {
-            TestPropertyValues.of(
-                    "DB_URL=" + postgres.getJdbcUrl(),
-                    "DB_USERNAME=" + postgres.getUsername(),
-                    "DB_PASSWORD=" + postgres.getPassword()
-            ).applyTo(context.getEnvironment());
-        }
-    }
-
-    @LocalServerPort
-    private int port;
-
+public class ProductControllerIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private String baseUrl;
-
     @BeforeEach
     void setUp() {
-        baseUrl = "http://localhost:" + port + "/products";
+        // Chama o setup da base para garantir baseUrl
+        super.setUpBase();
     }
 
     @Test
@@ -118,4 +80,3 @@ public class ProductControllerIntegrationTest {
         Assertions.assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }
-
