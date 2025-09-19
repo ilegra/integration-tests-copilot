@@ -1,0 +1,7 @@
+CREATE SCHEMA IF NOT EXISTS products;
+
+CREATE TABLE IF NOT EXISTS products.products (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL
+);
+
